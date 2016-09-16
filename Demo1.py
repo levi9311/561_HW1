@@ -9,12 +9,12 @@ class node:
 		""" init class with name """
 		self.name = name
 		self.pre_node = []
-		self.neighbors = {}
+		self.neighbors = []
 		self.sunday_cost = 0
 
 	def add_neighbor(self, node_name, cost):
 		""" add a connect node with cost """
-		self.neighbors[node_name] = cost
+		self.neighbors.append = (node_name, cost)
 
 	def add_sundayInfo(self, cost):
 		""" add sunday traffic cost information """
@@ -27,7 +27,7 @@ class queue_item:
 
 	"""
 
-	def __init__(self, name, routes):
+	def __init__(self, name, routes, cost = 0):
 		self.name = name
 		self.routes = routes
 		self.cost = 0
@@ -50,7 +50,7 @@ def BFS(NODE_LIST, START, GOAL):
 		if temp.name == GOAL:
 			return temp.routes + '#' + GOAL
 		for i in NODE_LIST[temp.name].neighbors:
-			temp_item = queue_item(i, temp.routes + '#' + temp.name)
+			temp_item = queue_item(i[0], temp.routes + '#' + temp.name)
 			node_queue.put(temp_item)
 
 	return ''
@@ -68,7 +68,7 @@ def DFS(NODE_LIST, START, GOAL):
 		if temp.name == GOAL:
 			return temp.routes + '#' + GOAL
 		for i in NODE_LIST[temp.name].neighbors:
-			temp_item = queue_item(i, temp.routes + '#' + temp.name)
+			temp_item = queue_item(i[0], temp.routes + '#' + temp.name)
 			node_queue.put(temp_item)
 
 	return ''
