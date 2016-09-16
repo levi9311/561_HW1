@@ -27,18 +27,50 @@ class queue_item:
 
 	"""
 
-	def __init__(self, name, routes):
+	def __init__(self, name, routes, cost = 0):
 		self.name = name
 		self.routes = routes
-		self.cost = 0
+		self.cost = cost
 
 	def add_cost(cost):
 		self.cost = self.cost + cost
+
+class priority_queue:
+	"""
+		the queue with priority
+
+	"""
+	def __init__(self):
+		self.list = []
+
+	def put(self, queue_item):
+		if self.list.empty():
+			self.list.append(queue_item)
+			return
+		flag = 0
+		for i in range(len(self.list)):
+			if queue_item.name == self.list[i].name:
+				if queue_item.cost < self.list[i].cost:
+					self.list[i] = queue_item
+					flag = 1
+				else
+					flag = 1
+
+		if flag == 0:
+			self.list.append(queue_item)
+
+		self.list.sort(key = lambda x: x.cost)
+
+	def get(self):
+		temp = self.list[0]
+		del self.list[0]
+		return temp
 
 
 
 def BFS(NODE_LIST, START, GOAL):
 	""" BFS strategy """
+	EXPLORED_LIST = []
 	node_queue = Queue.Queue()
 	new_start = queue_item(START, '')
 	node_queue.put(new_start)
@@ -50,13 +82,14 @@ def BFS(NODE_LIST, START, GOAL):
 		if temp.name == GOAL:
 			return temp.routes + '#' + GOAL
 		for i in NODE_LIST[temp.name].neighbors:
-			temp_item = queue_item(i, temp.routes + '#' + temp.name)
+			temp_item = queue_item(i, temp.routes + '#' + temp.name, temp.cost + NODE_LIST[temp.name].neighbors[i])
 			node_queue.put(temp_item)
 
 	return ''
 
 def DFS(NODE_LIST, START, GOAL):
 	""" DFS strategy """
+	EXPLORED_LIST = []
 	node_queue = Queue.LifoQueue()
 	new_start = queue_item(START, '')
 	node_queue.put(new_start)
@@ -73,7 +106,13 @@ def DFS(NODE_LIST, START, GOAL):
 
 	return ''
 
-def 
+def UCS(NODE_LIST, START, GOAL):
+	""" UCS strategy """
+	node_queue = priority_queue()
+	new_start = queue_item(START, '')
+	node_queue.put(new_start)
+
+
 
 file_reader = open('input.txt', 'r')
 
@@ -83,7 +122,6 @@ GOAL = file_reader.readline().strip()
 count = int(file_reader.readline())
 
 NODE_LIST = {}
-EXPLORED_LIST = []
 
 # generate the graph
 for i in range(count):
