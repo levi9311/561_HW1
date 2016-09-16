@@ -9,12 +9,12 @@ class node:
 		""" init class with name """
 		self.name = name
 		self.pre_node = []
-		self.neighbors = {}
+		self.neighbors = []
 		self.sunday_cost = 0
 
 	def add_neighbor(self, node_name, cost):
 		""" add a connect node with cost """
-		self.neighbors[node_name] = cost
+		self.neighbors.append = (node_name, cost)
 
 	def add_sundayInfo(self, cost):
 		""" add sunday traffic cost information """
@@ -70,8 +70,12 @@ class priority_queue:
 
 def BFS(NODE_LIST, START, GOAL):
 	""" BFS strategy """
+<<<<<<< HEAD
 	EXPLORED_LIST = []
 	node_queue = Queue.Queue()
+=======
+	node_queue = Queue.LifoQueue()
+>>>>>>> origin/master
 	new_start = queue_item(START, '')
 	node_queue.put(new_start)
 	while not node_queue.empty():
@@ -82,15 +86,24 @@ def BFS(NODE_LIST, START, GOAL):
 		if temp.name == GOAL:
 			return temp.routes + '#' + GOAL
 		for i in NODE_LIST[temp.name].neighbors:
+<<<<<<< HEAD
 			temp_item = queue_item(i, temp.routes + '#' + temp.name, temp.cost + NODE_LIST[temp.name].neighbors[i])
+=======
+			temp_item = queue_item(i[0], temp.routes + '#' + temp.name)
+>>>>>>> origin/master
 			node_queue.put(temp_item)
 
 	return ''
 
 def DFS(NODE_LIST, START, GOAL):
+<<<<<<< HEAD
 	""" DFS strategy """
 	EXPLORED_LIST = []
 	node_queue = Queue.LifoQueue()
+=======
+	""" BFS strategy """
+	node_queue = Queue.Queue()
+>>>>>>> origin/master
 	new_start = queue_item(START, '')
 	node_queue.put(new_start)
 	while not node_queue.empty():
@@ -101,11 +114,12 @@ def DFS(NODE_LIST, START, GOAL):
 		if temp.name == GOAL:
 			return temp.routes + '#' + GOAL
 		for i in NODE_LIST[temp.name].neighbors:
-			temp_item = queue_item(i, temp.routes + '#' + temp.name)
+			temp_item = queue_item(i[0], temp.routes + '#' + temp.name)
 			node_queue.put(temp_item)
 
 	return ''
 
+<<<<<<< HEAD
 def UCS(NODE_LIST, START, GOAL):
 	""" UCS strategy """
 	node_queue = priority_queue()
@@ -114,6 +128,8 @@ def UCS(NODE_LIST, START, GOAL):
 
 
 
+=======
+>>>>>>> origin/master
 file_reader = open('input.txt', 'r')
 
 strategy = file_reader.readline().strip()
@@ -151,7 +167,7 @@ if strategy == 'BFS':
 
 if strategy == 'DFS':
 	print DFS(NODE_LIST, START, GOAL)
-
+	
 
 
 
