@@ -39,7 +39,7 @@ class queue_item:
 
 def BFS(NODE_LIST, START, GOAL):
 	""" BFS strategy """
-	node_queue = Queue.LifoQueue()
+	node_queue = Queue.Queue()
 	new_start = queue_item(START, '')
 	node_queue.put(new_start)
 	while not node_queue.empty():
@@ -56,8 +56,8 @@ def BFS(NODE_LIST, START, GOAL):
 	return ''
 
 def DFS(NODE_LIST, START, GOAL):
-	""" BFS strategy """
-	node_queue = Queue.Queue()
+	""" DFS strategy """
+	node_queue = Queue.LifoQueue()
 	new_start = queue_item(START, '')
 	node_queue.put(new_start)
 	while not node_queue.empty():
@@ -72,6 +72,8 @@ def DFS(NODE_LIST, START, GOAL):
 			node_queue.put(temp_item)
 
 	return ''
+
+def 
 
 file_reader = open('input.txt', 'r')
 
@@ -111,7 +113,7 @@ if strategy == 'BFS':
 
 if strategy == 'DFS':
 	print DFS(NODE_LIST, START, GOAL)
-	
+
 
 
 
