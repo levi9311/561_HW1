@@ -39,24 +39,6 @@ class queue_item:
 
 def BFS(NODE_LIST, START, GOAL):
 	""" BFS strategy """
-	node_queue = Queue.Queue()
-	new_start = queue_item(START, '')
-	node_queue.put(new_start)
-	while not node_queue.empty():
-		temp = node_queue.get()
-		if temp.name in EXPLORED_LIST:
-			continue
-		EXPLORED_LIST.append(temp.name)
-		if temp.name == GOAL:
-			return temp.routes + '#' + GOAL
-		for i in NODE_LIST[temp.name].neighbors:
-			temp_item = queue_item(i[0], temp.routes + '#' + temp.name)
-			node_queue.put(temp_item)
-
-	return ''
-
-def DFS(NODE_LIST, START, GOAL):
-	""" DFS strategy """
 	node_queue = Queue.LifoQueue()
 	new_start = queue_item(START, '')
 	node_queue.put(new_start)
@@ -73,7 +55,23 @@ def DFS(NODE_LIST, START, GOAL):
 
 	return ''
 
-def 
+def DFS(NODE_LIST, START, GOAL):
+	""" BFS strategy """
+	node_queue = Queue.Queue()
+	new_start = queue_item(START, '')
+	node_queue.put(new_start)
+	while not node_queue.empty():
+		temp = node_queue.get()
+		if temp.name in EXPLORED_LIST:
+			continue
+		EXPLORED_LIST.append(temp.name)
+		if temp.name == GOAL:
+			return temp.routes + '#' + GOAL
+		for i in NODE_LIST[temp.name].neighbors:
+			temp_item = queue_item(i[0], temp.routes + '#' + temp.name)
+			node_queue.put(temp_item)
+
+	return ''
 
 file_reader = open('input.txt', 'r')
 
@@ -113,7 +111,7 @@ if strategy == 'BFS':
 
 if strategy == 'DFS':
 	print DFS(NODE_LIST, START, GOAL)
-
+	
 
 
 
