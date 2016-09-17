@@ -14,7 +14,7 @@ class node:
 
 	def add_neighbor(self, node_name, cost):
 		""" add a connect node with cost """
-		self.neighbors.append = (node_name, cost)
+		self.neighbors.append((node_name, cost))
 
 	def add_sundayInfo(self, cost):
 		""" add sunday traffic cost information """
@@ -41,41 +41,48 @@ class priority_queue:
 
 	"""
 	def __init__(self):
-		self.list = []
+		self.qlist = []
 
 	def put(self, queue_item):
-		if self.list.empty():
-			self.list.append(queue_item)
+		''' put node in queue ordered by path cost '''
+		print 'before: ' + str(self.qlist)
+		if not self.qlist:
+			self.qlist.append(queue_item)
 			return
 		flag = 0
-		for i in range(len(self.list)):
-			if queue_item.name == self.list[i].name:
-				if queue_item.cost < self.list[i].cost:
-					self.list[i] = queue_item
+		for i in range(len(self.qlist)):
+			if queue_item.name == self.qlist[i].name:
+				if queue_item.cost < self.qlist[i].cost:
+					self.qlist[i] = queue_item
 					flag = 1
-				else
+				else: 
 					flag = 1
 
 		if flag == 0:
-			self.list.append(queue_item)
+			self.qlist.append(queue_item)
 
-		self.list.sort(key = lambda x: x.cost)
+		# sort by path cost
+		self.qlist.sort(key = lambda x: x.cost)
+		print 'after:'
+		for i in self.qlist:
+			print i.name + ' ' + str(i.cost)
 
 	def get(self):
-		temp = self.list[0]
-		del self.list[0]
+		temp = self.qlist[0]
+		del self.qlist[0]
 		return temp
 
+	def empty(self):
+		flag = False
+		if len(self.qlist) == 0:
+			flag = True 
+		return flag
 
 
 def BFS(NODE_LIST, START, GOAL):
 	""" BFS strategy """
-<<<<<<< HEAD
 	EXPLORED_LIST = []
 	node_queue = Queue.Queue()
-=======
-	node_queue = Queue.LifoQueue()
->>>>>>> origin/master
 	new_start = queue_item(START, '')
 	node_queue.put(new_start)
 	while not node_queue.empty():
@@ -84,26 +91,17 @@ def BFS(NODE_LIST, START, GOAL):
 			continue
 		EXPLORED_LIST.append(temp.name)
 		if temp.name == GOAL:
-			return temp.routes + '#' + GOAL
+			return (temp.routes + '#' + temp.name, temp.cost)
 		for i in NODE_LIST[temp.name].neighbors:
-<<<<<<< HEAD
-			temp_item = queue_item(i, temp.routes + '#' + temp.name, temp.cost + NODE_LIST[temp.name].neighbors[i])
-=======
-			temp_item = queue_item(i[0], temp.routes + '#' + temp.name)
->>>>>>> origin/master
+			temp_item = queue_item(i[0], temp.routes + '#' + temp.name, temp.cost + 1)
 			node_queue.put(temp_item)
 
 	return ''
 
 def DFS(NODE_LIST, START, GOAL):
-<<<<<<< HEAD
 	""" DFS strategy """
 	EXPLORED_LIST = []
 	node_queue = Queue.LifoQueue()
-=======
-	""" BFS strategy """
-	node_queue = Queue.Queue()
->>>>>>> origin/master
 	new_start = queue_item(START, '')
 	node_queue.put(new_start)
 	while not node_queue.empty():
@@ -112,24 +110,57 @@ def DFS(NODE_LIST, START, GOAL):
 			continue
 		EXPLORED_LIST.append(temp.name)
 		if temp.name == GOAL:
-			return temp.routes + '#' + GOAL
+			return (temp.routes + '#' + temp.name, temp.cost)
+		NODE_LIST[temp.name].neighbors.reverse()
 		for i in NODE_LIST[temp.name].neighbors:
-			temp_item = queue_item(i[0], temp.routes + '#' + temp.name)
+			print str(i) + ' ' + str(temp.name)
+			temp_item = queue_item(i[0], temp.routes + '#' + temp.name, temp.cost + 1)
 			node_queue.put(temp_item)
 
 	return ''
 
-<<<<<<< HEAD
 def UCS(NODE_LIST, START, GOAL):
 	""" UCS strategy """
+	EXPLORED_LIST = []
 	node_queue = priority_queue()
 	new_start = queue_item(START, '')
 	node_queue.put(new_start)
+	while not node_queue.empty():
+		temp = node_queue.get()
+		if temp.name in EXPLORED_LIST:
+			continue
+		EXPLORED_LIST.append(temp.name)
+		if temp.name == GOAL:
+			return (temp.routes + '#' + temp.name, temp.cost)
+		for i in NODE_LIST[temp.name].neighbors:
+			temp_item = queue_item(i[0], temp.routes + '#' + temp.name, temp.cost + i[1])
+			node_queue.put(temp_item)
 
+	return ''
 
+def A_STAR(NODE_LIST, START, GOAL):
+	""" A* strategy """
+	EXPLORED_LIST = []
+	node_queue = priority_queue()
+	new_start = queue_item(START, '', NODE_LIST[START].sunday_cost)
+	node_queue.put(new_start)
+	while not node_queue.empty():
+		temp = node_queue.get()
+		if temp.name in EXPLORED_LIST:
+			continue
+		EXPLORED_LIST.append(temp.name)
+		if temp.name == GOAL:
+			return (temp.routes + '#' + temp.name, temp.cost)
+		print 'neighbors: '+ str(NODE_LIST[temp.name].neighbors)
+		for i in NODE_LIST[temp.name].neighbors:
+			print 'put' + str(i)
+			cost_g = temp.cost - NODE_LIST[temp.name].sunday_cost + i[1]
+			cost_h =  NODE_LIST[i[0]].sunday_cost
+			temp_item = queue_item(i[0], temp.routes + '#' + temp.name, cost_g + cost_h)
+			node_queue.put(temp_item)	
 
-=======
->>>>>>> origin/master
+	return ''
+
 file_reader = open('input.txt', 'r')
 
 strategy = file_reader.readline().strip()
@@ -162,17 +193,21 @@ for i in range(count_sun):
 	COST = int(sunday_route[1])
 	NODE_LIST[STATE].add_sundayInfo(COST)
 
+route_tuple = None
+
 if strategy == 'BFS':
-	print BFS(NODE_LIST, START, GOAL)
+	route_tuple = BFS(NODE_LIST, START, GOAL)
+	print route_tuple
 
 if strategy == 'DFS':
-	print DFS(NODE_LIST, START, GOAL)
+	route_tuple = DFS(NODE_LIST, START, GOAL)
+	print route_tuple
+
+if strategy == 'UCS':
+	route_tuple = UCS(NODE_LIST, START, GOAL)
+	print route_tuple
 	
+if strategy == 'A*':
+	route_tuple = A_STAR(NODE_LIST, START, GOAL)
+	print route_tuple
 
-
-
-a = node('road')
-b = [a]
-if a in b:
-	a.add_neighbor('A', 34)
-	a.add_neighbor('B', 34)
